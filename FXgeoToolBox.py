@@ -391,6 +391,130 @@ class FXGeoData:
         return None
 
 
+    def plotDataViolin(self, showplot=False, scale="count", inner="stick",
+                       linewidth=.1, bw=.1, lang="EN", xticks=10, xUpLim=None,
+                       xLoLim=None, Tor_yLoLim=None,  Tor_yUpLim=None,
+                       Cur_yLoLim=None,  Cur_yUpLim=None):
+
+        ''' Plot violin graphs of xgeo descriptors values'''
+        if lang == "EN":
+            tor_label = "Torsion"
+            curv_label = "Curvature"
+            res_label = "Residue"
+        if lang == "PT":
+            tor_label = "Torção"
+            curv_label = "Curvatura"
+            res_label = "Resíduo"
+
+        # plot with 2 axes
+        plt.figure(1)
+        # Torsion
+        plt.subplot(211)
+        ax = sns.violinplot(x=self.data['res_n'], y=self.data['res_torsion'],
+                            hue=None, data=None, split=True, inner=inner,
+                            bw=bw, scale=scale, linewidth=linewidth)
+        plt.xticks(range(1, self.nres, xticks),
+                   range(self.data['res_n'][0], self.data['res_n'][-1], xticks))
+        if Tor_yLoLim is not None:
+            plt.ylim(ymin=Tor_yLoLim)
+        if Tor_yUpLim is not None:
+            plt.ylim(ymax=Tor_yUpLim)
+        if xLoLim is not None:
+            plt.xlim(xmin=xLoLim)
+        if xUpLim is not None:
+            plt.xlim(xmax=xUpLim)
+
+        # plt.xlabel("Residues")
+        plt.ylabel(tor_label)
+        plt.grid(True)
+
+        # Curvature
+        plt.subplot(212)
+        ax = sns.violinplot(x=self.data['res_n'], y=self.data['res_curvature'],
+                            hue=None, data=None, split=True, inner=inner,
+                            bw=bw, scale=scale, linewidth=linewidth)
+        plt.xlabel(res_label)
+        plt.ylabel(curv_label)
+        plt.xticks(range(1, self.nres, xticks),
+                   range(self.data['res_n'][0], self.data['res_n'][-1], xticks))
+        plt.grid(True)
+
+        if Cur_yLoLim is not None:
+            plt.ylim(ymin=Cur_yLoLim)
+        if Cur_yUpLim is not None:
+            plt.ylim(ymax=Cur_yUpLim)
+        if xLoLim is not None:
+            plt.xlim(xmin=xLoLim)
+        if xUpLim is not None:
+            plt.xlim(xmax=xUpLim)
+
+        if showplot is True:
+            plt.show()
+
+        plt.savefig("ViolinKTJointPlot.png", dpi=600)
+        plt.close()
+
+        # Plot individual plots
+
+        # plt.close("All")
+        # TORSION
+        ax = sns.violinplot(x=self.data['res_n'], y=self.data['res_torsion'],
+                            hue=None, data=None, split=True, inner=inner,
+                            bw=bw, scale=scale, linewidth=linewidth)
+        plt.xlabel(res_label)
+        plt.ylabel(tor_label)
+        plt.xticks(range(1, self.nres, xticks),
+                   range(self.data['res_n'][0], self.data['res_n'][-1], xticks))
+        plt.savefig("ViolinTOR.png", dpi=600)
+
+        if showplot is True:
+            plt.show()
+        plt.close()
+
+        # CURVATURE
+        ax = sns.violinplot(x=self.data['res_n'], y=self.data['res_curvature'],
+                            hue=None, data=None, split=True, inner=inner,
+                            bw=bw, scale=scale, linewidth=linewidth)
+        plt.xlabel(res_label)
+        plt.ylabel(curv_label)
+        plt.xticks(range(1, self.nres, xticks),
+                   range(self.data['res_n'][0], self.data['res_n'][-1], xticks))
+        plt.savefig("ViolinCURV.png", dpi=600)
+        if showplot is True:
+            plt.show()
+        plt.close()
+
+        # ARC LENGTH
+        ax = sns.violinplot(x=self.data['res_n'], y=self.data['res_arc_len'],
+                            hue=None, data=None, split=True, inner=inner,
+                            bw=bw, scale=scale, linewidth=linewidth)
+        plt.xlabel(res_label)
+        plt.ylabel("Arc Length")
+        plt.ylim(6.0)
+        plt.xticks(range(1, self.nres, xticks),
+                   range(self.data['res_n'][0], self.data['res_n'][-1], xticks)
+                   )
+        plt.savefig("ViolinARC.png", dpi=600)
+
+        if showplot is True:
+            plt.show()
+        plt.close()
+
+        # WRITHING
+        ax = sns.violinplot(x=self.data['res_n'], y=self.data['res_writhing'],
+                            hue=None, data=None, split=True, inner=inner,
+                            bw=bw, scale=scale, linewidth=linewidth)
+        plt.xlabel(res_label)
+        plt.ylabel("Writhing")
+        plt.xticks(range(1, self.nres, xticks),
+                   range(self.data['res_n'][0], self.data['res_n'][-1], xticks)
+                   )
+        plt.savefig("ViolinWRI.png", dpi=600)
+        if showplot is True:
+            plt.show()
+        plt.close()
+        return None
+
     def plotResData(self, res):
         ''' Plot data for individual residues.'''
 
