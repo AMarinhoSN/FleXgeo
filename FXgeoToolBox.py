@@ -4,9 +4,11 @@ import sys
 import os
 import numpy as np
 import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
+sns.set()
 import sklearn.cluster as cluster
 import hdbscan
 import time
@@ -29,14 +31,17 @@ functions for protein conformational ensemble analyses based on FleXgeo output.
 
 '''
 
-## FUNCTIONS ##
+# TODO add dmax script, Comparison script, add clustering script
+
+# FUNCTIONS #
 def loadCSV(cvs_file_name):
     """ Load data from .csv files """
+
     data = np.loadtxt(cvs_file_name,
                       delimiter=',',
                       dtype={'names': ('conf_i',
                                        'res_n',
-                                      #'res_name',
+                                      # 'res_name',
                                        'res_curvature',
                                        'res_torsion',
                                        'res_arc_len',
@@ -48,7 +53,7 @@ def loadCSV(cvs_file_name):
                             'formats':
                                       ('i4',
                                        'i4',
-                                      #'S3',
+                                      # 'S3',
                                        'f4',
                                        'f4',
                                        'f4',
@@ -60,7 +65,7 @@ def loadCSV(cvs_file_name):
                       )
     return data
 
-### CLASSES ####
+# CLASSES #
 
 class Conf:
     '''
@@ -212,11 +217,11 @@ class FXGeoData:
                 ConfObj.data[n][3] = point['res_arc_len']
                 ConfObj.data[n][4] = point['res_writhing']
                 continue
-        #----------------------------------------------------------------------|
-        #--| Clustering Atributes |--------------------------------------------|
+        # ---------------------------------------------------------------------|
+        # -| Clustering Atributes |--------------------------------------------|
         self.lclustersPerRes = []
 
-        #--| StructVar Matrices |----------------------------------------------|
+        # -| StructVar Matrices |----------------------------------------------|
         self.d2perResSerialMTX = []
         self.d2VarperResMTX = []
         self.d2fromrefSerialMTX = []
@@ -268,9 +273,9 @@ class FXGeoData:
                 break
         return conf
 
-    #|-------------------------------------------------------------------------|
+    # -------------------------------------------------------------------------|
 
-    #|----| Methods for CSV data analyses |--------------------------|
+    # ----| Methods for CSV data analyses |--------------------------|
     def WriteClstrMultiModelPDB(self,pdb_in, out_name,out_pdbdir):
         '''
          Write a multimodel PDB with conformations. This is usefull for cluster
@@ -538,3 +543,186 @@ class FXGeoData:
         Plot3D(ca_x,ca_y,ca_z,self.name+'_xyz')
         Plot3D(k,t,n,self.name+'_ktn')
         return None
+
+    # -----| methods to compare conformations |--------------------------------|
+    def calcD2ConfperRes(self, cref_idx=0, showplot=False, xsticks=10, ysticks=10,
+                     lang="EN", bw=.1, linewidth=.1, scale="count", inner=None,
+                     out_prefix='LocalStructStab'):
+        '''
+        Calcualte KT Euclidean distance of all conformations to an arbitrary
+        conformation on the ensemble.
+        The default behaviour is calculate for the first conformation, but the
+        user can specicify the index of the reference conformation specified by
+        cref_idx (int).
+
+        '''
+
+        # Get language labels for plots
+        if lang not in ("EN", "PT"):
+            print(" WARNING: You need to provide a supported language for plot")
+            print("          labels. Current valid options are 'EN' and 'PT'")
+            print("          Setting to 'EN'")
+            lang = "EN"
+
+        if lang is "PT":
+            reslabel = "Resíduo"
+            conflabel = "Índice da conformação"
+            d2label = "Distância Euclidiana"
+        if lang is "EN":
+            reslabel = "Residue"
+            conflabel = "Conformation index"
+            d2label = "Euclidean distance"
+
+        # 0 - get the first conf data and set it as ref values
+        try:
+            conf_ref = self.confsObjs[cref_idx][1]
+
+        except(TypeError):
+            print('ERROR: cref_idx provided is not a valid integer')
+            exit(0)
+        # TODO add the error for cref_idx not in the range of the ensemble
+
+        SerialMtx = np.zeros((self.nres, self.nconfs+1))
+
+        # fill res columns
+        for n, res_n in enumerate(self.reslist):
+            SerialMtx[n][0] = res_n
+
+        # calculate d2_ij for all residues and store results on Mtx
+        for j_idx, conf_j in enumerate(self.confslist):
+            # print j_idx, " - ", self.confsObjs[j_idx]
+            conf_j = self.confsObjs[j_idx][1]
+            d2_refjMTX = conf_ref.calcD2KTperResOf(conf_j)
+            for each in d2_refjMTX:
+                if each[1] < 0:
+                    print(d2_refjMTX)
+                    print("WARN: Negative value")
+            for n, d2ij in enumerate(d2_refjMTX):
+                SerialMtx[n][j_idx+1] = d2_refjMTX[n][1]
+
+        self.d2perResSerialMTX = SerialMtx
+
+        # Format data to plot
+        data4plot = []
+        for res_line in SerialMtx:
+            res_d2_data = []
+            res = res_line[0]
+            isFirst = True
+
+            for i, conf_i in enumerate(self.confslist):
+                # ## DEBUG ###
+                # print res, ", ", res_line[i+1],",", conf_i
+                # ############
+
+                d2_resn_ij = res_line[i+1]
+
+                if isFirst is True:
+                    res_d2_data = np.array([res, d2_resn_ij, conf_i])
+                    isFirst = False
+                    # print res_d2_data
+                else:
+                    data_point = np.array([res, d2_resn_ij, conf_i])
+                    res_d2_data = np.vstack((res_d2_data, data_point))
+                    # res_d2_data.append(data_point)
+
+            data4plot.append(res_d2_data)
+
+        # Generate 3D plot
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+
+        # Get one color for each residue line
+        colors = matplotlib.cm.rainbow(np.linspace(0, 1, len(data4plot)))
+
+        # Generate individual plots
+        for i, res_d in enumerate(data4plot):
+            x = res_d[..., 0]  # res
+            z = res_d[..., 1]  # d2
+            y = res_d[..., 2]  # conf
+
+            ax.plot(xs=x, ys=y, zs=z, c=colors[i], linewidth=0.5,
+                    fillstyle='full')
+        # set general plot labels and save .png
+        ax.set_xlabel(reslabel)
+        ax.set_ylabel(conflabel)
+        ax.set_zlabel(d2label)
+
+        plt.savefig("test.png", dpi=600)
+        if showplot is True:
+            plt.show()
+        plt.close()
+
+        # write csv out file
+        out_f = open("LocalDistFromRef.csv", 'w')
+        out_f.write('#res,')
+        for idx, col in enumerate(SerialMtx[0]):
+            if idx == 0:
+                continue
+            else:
+                out_f.write('d2_n1'+str(idx)+', ')
+            if idx == len(SerialMtx[0])-1:
+                out_f.write('d2_n1'+str(idx)+'\n')
+
+        for line in SerialMtx:
+            for idx, col in enumerate(line):
+                out_f.write(str(col)+',')
+                if idx == len(line)-1:
+                    out_f.write(str(col)+'\n')
+        out_f.close()
+
+        # PLOT MATRIX
+        #print(SerialMtx)
+        sns.heatmap(SerialMtx, vmax=.8, square=False,
+                    xticklabels=xsticks,
+                    yticklabels=ysticks,
+                    cmap='Reds')
+        plt.xlabel(conflabel)
+        plt.ylabel(reslabel+" index")
+        plt.savefig("LocalStrucStab_MTX.png", dpi=600)
+        #if showplot is True:
+        #    plt.show()
+        plt.close()
+
+        # ## WARNING ###
+        # # GAMBIARRA ALERT ###########################################
+        # # Para plotar o violin tive que reestruturar o SerialMTX   ##
+        # # Future Antonio,
+        # # I know you hate me by now, but try to rework the SerialMTX
+        # # representation to avoid such gambiarras
+        # ##############################################################
+        # ViolinMTX = np.zeros((self.nres * self.nconfs, 2))
+
+        ViolinArray = np.array([0, 0])
+
+        for n, line in enumerate(SerialMtx):
+            for i, col in enumerate(line):
+                if i == 0:
+                    continue
+                # print line[0], line[i]
+
+                dtapoint = np.array([line[0], line[i]])
+                if line[i] < 0:
+                    print(dtapoint)
+                ViolinArray = np.vstack((ViolinArray, dtapoint))
+
+        # Plot Violin d2
+        #print(ViolinArray)
+        x = ViolinArray[1:-1, 0]
+        y = ViolinArray[1:-1, 1]
+
+        ax = sns.violinplot(x=x, y=y, hue=None, data=None,
+                            split=False,
+                            scale=scale,
+                            inner=inner,
+                            bw=bw,
+                            linewidth=linewidth)
+
+        plt.xticks(range(1, self.nres, xsticks),
+                   range(self.data['res_n'][0], self.data['res_n'][-1], xsticks))
+        plt.xlabel("Residues")
+        plt.ylabel(r"$\kappa-\tau$ Euclidean Distance")
+        # plt.ylim(0,max(y))
+        # plt.title("Violin plot of KT Euclidean Distance from a reference structure*")
+        plt.savefig("ViolinKTDistFromRef.png", dpi=600)
+        plt.show()
+        plt.close()

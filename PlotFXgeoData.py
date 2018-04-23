@@ -1,5 +1,7 @@
 import FXgeoToolBox
 from sys import argv
+import pickle
+
 '''
 This scripts generate plots for FleXgeo results,
 '''
@@ -18,3 +20,8 @@ CSVdata.plotConfsKTData(showplot=False, REF=None, REFlabel=None, lang="EN",
 print("@ Generate violin plots of FleXgeo values")
 CSVdata.plotDataViolin(showplot=False, scale="count", inner="stick",
                        linewidth=.1, bw=.1, lang="EN")
+
+print("@ Save CSVdata as pickle file 'XgeoObj.p'")
+# \--\ save state \--\
+pickle.dump(CSVdata, open("XgeoObj.p", "wb"))
+# \-------------------\
