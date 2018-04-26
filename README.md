@@ -4,10 +4,12 @@ The FleXgeo is a software package designed for protein conformational ensemble a
 ## How to run it?
 There are two stages of FleXgeo applications, the differential geometry descriptors calculation and the analyses part. A website with tutorials will be provided in the future, but for now check the **quick and dirt** guide:
 - **1 . Calculate Differential Geometry**
-	>$ /path/to/FleXgeo_bin ensemble.pdb ncpus
+	>$ /path/to/FleXgeo_bin -pdb=ensemble.pdb [options]
 
-	- ensemble.pdb = You must provide a multimodel PDB with conformations of the same protein, i. e., all conformations needs to have the same number of residues.
-	- ncpus = the number of cpus you want to run FleXgeo.
+	- -pdb=<string> : pdb input filename
+	- -ncpus=<int>  : set number of cpus to run FleXgeo (default=all cpus available)
+	- -isSingle     : indicate if is a single conformation pdb (default=False)
+	
 - **2. Analyses**
 >> [ADICIONAR SCRIPTS]
 
