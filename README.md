@@ -7,9 +7,10 @@ There are two stages of FleXgeo applications, the differential geometry descript
 	>$ /path/to/FleXgeo_bin -pdb=ensemble.pdb [options]
 
 	- -pdb=<string> : pdb input filename
+	[OPTIONS]
 	- -ncpus=<int>  : set number of cpus to run FleXgeo (default=all cpus available)
 	- -isSingle     : indicate if is a single conformation pdb (default=False)
-	
+
 - **2. Analyses**
 >> [ADICIONAR SCRIPTS]
 
