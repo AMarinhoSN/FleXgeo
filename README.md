@@ -9,15 +9,15 @@ There are two stages of FleXgeo applications, the differential geometry descript
 	- ensemble.pdb = You must provide a multimodel PDB with conformations of the same protein, i. e., all conformations needs to have the same number of residues.
 	- ncpus = the number of cpus you want to run FleXgeo.
 - **2. Analyses**
-	..* Plot xgeo data
+	⋅⋅* Plot xgeo data
 	>$ python3.5 /path/to/PlotFXgeoData.py DiffGeo_raw.csv
 
-	..* Calculate distance between all conformations and a reference conformation on the ensemble
+	⋅⋅* Calculate distance between all conformations and a reference conformation on the ensemble
 	>$ python3.5 /path/to/CalcEnsDistFromRef.py -in=XgeoObjFilname.p
 
-	..* [TOADD] Calculate distance between all conformations and an external reference conformation
-	..* [TOADD] Calculate dMax
-	..* [TOADD] Clustering by HDBScan
+	⋅⋅* [TOADD] Calculate distance between all conformations and an external reference conformation
+	⋅⋅* [TOADD] Calculate dMax
+	⋅⋅* [TOADD] Clustering by HDBScan
 
 >> [ADICIONAR SCRIPTS]
 
