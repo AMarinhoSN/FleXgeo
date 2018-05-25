@@ -11,6 +11,16 @@ There are two stages of FleXgeo applications, the differential geometry descript
 	- -isSingle     : indicate if is a single conformation pdb (default=False)
 
 - **2. Analyses**
+	* Plot xgeo data
+	>$ python3.5 /path/to/PlotFXgeoData.py DiffGeo_raw.csv
+
+	* Calculate distance between all conformations and a reference conformation on the ensemble
+	>$ python3.5 /path/to/CalcEnsDistFromRef.py -in=XgeoObjFilname.p
+
+	* [TOADD] Calculate distance between all conformations and an external reference conformation
+	* [TOADD] Calculate dMax
+	* [TOADD] Clustering by HDBScan
+
 >> [ADICIONAR SCRIPTS]
 
 ## What are the contents of the output files?
