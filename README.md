@@ -1,4 +1,5 @@
 # FleXgeo
+
 The FleXgeo is a software package designed for protein conformational ensemble analyses based on a differential geometry representation of protein backbones. The package is composed of a binary of the core program which calculates the differential geometry descriptors (more details bellow) and a set of scripts designed for the analyses of the results.
 
 ## How to run it?
@@ -6,9 +7,14 @@ There are two stages of FleXgeo applications, the differential geometry descript
 - **1 . Calculate Differential Geometry**
 	>$ /path/to/FleXgeo_bin -pdb=ensemble.pdb [options]
 
-	- -pdb=<string> : pdb input filename
-	- -ncpus=<int>  : set number of cpus to run FleXgeo (default=all cpus available)
-	- -isSingle     : indicate if is a single conformation pdb (default=False)
+FleXgeo accetps the following arguments on the following table.
+
+|    OPTIONS       | DESCRIPTION               | DEFAULT                 |
+|----------------|-----------------------------|--------------------------|
+|`-pdb=[filename.pdb]`|Set input .pdb filename|User must provide  |
+|`-ncpus=[int]`      |Set the number of cpus FleXgeo will use | All cpus available|
+| `-isSingle`        |Indicate if input pdb is a single conformation pdb | FALSE|
+|`-outprfx=[prefix]` | Set the output files prefix to be used | 'Diffgeo_' |
 
 - **2. Analyses**
 	* Plot xgeo data
@@ -17,16 +23,18 @@ There are two stages of FleXgeo applications, the differential geometry descript
 	* Calculate distance between all conformations and a reference conformation on the ensemble
 	>$ python3.5 /path/to/CalcEnsDistFromRef.py -in=XgeoObjFilname.p
 
-	* [TOADD] Calculate distance between all conformations and an external reference conformation
-	* [TOADD] Calculate dMax
-	* [TOADD] Clustering by HDBScan
-
->> [ADICIONAR SCRIPTS]
+	* [TO ADD] Calculate distance between all conformations and an external reference conformation
+	* [TO ADD] Calculate dMax
+	* [TO ADD] Clustering by HDBScan
 
 ## What are the contents of the output files?
+FleXgeo outputs 5 .csvs files:
+
+
 [ADICIONAR DESCRIÇAO]
 
 ## How to cite?
+If you use results produced by FleXgeo please cite
 [adicionar paper]
 
 ## Why just binaries files for the core of FleXgeo?
