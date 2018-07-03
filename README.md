@@ -7,7 +7,7 @@ There are two stages of FleXgeo applications, the differential geometry descript
 - **1 . Calculate Differential Geometry**
 	>$ /path/to/FleXgeo_bin -pdb=ensemble.pdb [options]
 
-FleXgeo accetps the following arguments on the following table.
+FleXgeo accetps the following arguments:
 
 |    OPTIONS       | DESCRIPTION               | DEFAULT                 |
 |----------------|-----------------------------|--------------------------|
@@ -30,12 +30,11 @@ FleXgeo accetps the following arguments on the following table.
 ## What are the contents of the output files?
 FleXgeo outputs 5 .csvs files:
 
-
 [ADICIONAR DESCRIÇAO]
 
 ## How to cite?
-If you use results produced by FleXgeo please cite
+If you use results produced by FleXgeo on your amazing publication, please cite:
 [adicionar paper]
 
 ## Why just binaries files for the core of FleXgeo?
-Unfortunatly, we use Numerical Recipies on our code and we are not allowed to distribute the source code. We plan to rewrite those part of the code in the future, but this is not on our top priorities right now. If you have some trouble on running a binary file on your machine, feel free to contact Antonio at amarinho@cent.uw.edu.pl and we can try to provide an specific binary for your machine.
+Unfortunatly, we use Numerical Recipies on our code and we are not allowed to distribute the source code. We plan to rewrite those part of the code in the future, but this is not on our top priorities right now. If you have some trouble on running a binary file on your machine, feel free to contact Antonio at amarinho@cent.uw.edu.pl and we can try to provide an specific binary for you.
