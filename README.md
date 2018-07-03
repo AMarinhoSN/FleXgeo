@@ -7,7 +7,7 @@ There are two stages of FleXgeo applications, the differential geometry descript
 - **1 . Calculate Differential Geometry**
 	>$ /path/to/FleXgeo_bin -pdb=ensemble.pdb [options]
 
-FleXgeo accetps the following arguments:
+FleXgeo accepts the following arguments:
 
 |    OPTIONS       | DESCRIPTION               | DEFAULT                 |
 |----------------|-----------------------------|--------------------------|
