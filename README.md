@@ -23,7 +23,9 @@ FleXgeo accepts the following arguments:
 	* Calculate distance between all conformations and a reference conformation on the ensemble
 	>$ python3.5 /path/to/CalcEnsDistFromRef.py -in=XgeoObjFilname.p
 
-	* [TO ADD] Calculate distance between all conformations and an external reference conformation
+	* Calculate distance between all conformations and an external reference conformation
+	>$ python3.5 /path/to/CalcEnsDistFromRef.py -in=XgeoObjFilname.p -ext_ref=/path/to/ref_xgeo.csv
+
 	* [TO ADD] Calculate dMax
 	* [TO ADD] Clustering by HDBScan
 
