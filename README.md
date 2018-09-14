@@ -1,7 +1,7 @@
 
 # FleXgeo
 
-The FleXgeo is a software package designed for protein conformational ensemble analyses based on a differential geometry representation of protein backbones. The package is composed of a binary of the core program which calculates the differential geometry descriptors (more details bellow) and a set of scripts designed for the analyses of the results. FleXgeo was written by PhD. Antonio Marinho da Silva Neto and PhD. Rinaldo Wander Montalvao.
+The FleXgeo is a software package designed for protein conformational ensemble analyses based on a differential geometry representation of protein backbones. The package is composed of a binary of the core program which calculates the differential geometry descriptors (more details bellow) and a set of scripts designed for the analyses of the results. FleXgeo code was written by PhD. Antonio Marinho da Silva Neto and PhD. Rinaldo Wander Montalvao.
 
 ## How to run it?
 There are two stages of FleXgeo applications, the differential geometry descriptors calculation and the analyses part. A website with tutorials will be provided in the future, but for now check the **quick and dirt** guide:
