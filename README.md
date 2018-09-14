@@ -46,14 +46,18 @@ FleXgeo accepts the following arguments:
 
 	* [TO ADD] Clustering by HDBScan
 
-## What are the contents of the output files?
-FleXgeo outputs 5 .csvs files:
+	## What are the contents of the output files?
+	FleXgeo outputs 5 .csv files:
 
-[ADICIONAR DESCRIÇAO]
+	 1. **Diffgeo_xgeo.csv** :  contains the calculated differential geometry descriptors of the input ensemble.
+	 2.  Diffgeo_NORM.csv : Same values of "Diffgeo_xgeo,csv" but normalized to [0,1].
+	 3.  Diffgeo_MEAN.csv: Mean values of FleXgeo descriptors per residue
+	 4.  Diffgeo_STD.csv: Standard deviation of FleXgeo descriptors per residue
+	 5.  Diffgeo_VAR.csv: Variation of FleXgeo descriptors per residue
+	 6.  DiffgeoStat.lua : The histogram bins position and value of each descriptor for each residue.
 
-## How to cite?
-If you use results produced by FleXgeo on your amazing publication, please cite:
-[adicionar paper]
+	## How to cite?
+	The FleXgeo paper is currently under consideration for publication and will be added here as soon as possible.
 
-## Why just binaries files for the core of FleXgeo?
-Unfortunatly, we use Numerical Recipies on our code and we are not allowed to distribute the source code. We plan to rewrite those part of the code in the future, but this is not on our top priorities right now. If you have some trouble on running a binary file on your machine, feel free to contact Antonio at amarinho@cent.uw.edu.pl and we can try to provide an specific binary for you.
+	## Why just binaries files for the core of FleXgeo?
+	Unfortunately, we use Numerical Recipes on our code and we are not allowed to distribute the source code. We plan to rewrite those part of the code in the future, but this is not on our top priorities right now. If you have some trouble on running a binary file on your machine, feel free to contact Antonio at amarinho@cent.uw.edu.pl and we can try to provide an specific binary for you.
