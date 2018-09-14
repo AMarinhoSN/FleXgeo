@@ -545,7 +545,7 @@ class FXGeoData:
         return None
 
     # -----| methods to compare conformations |--------------------------------|
-    def calcD2ConfperRes(self, cref_idx=0, showplot=False, xsticks=10, ysticks=10,
+    def calcD2ConfperRes(self, cref_idx=0, ext_ref=None, showplot=False, xsticks=10, ysticks=10,
                      lang="EN", bw=.1, linewidth=.1, scale="count", inner=None,
                      out_prefix='LocalStructStab'):
         '''
@@ -554,7 +554,6 @@ class FXGeoData:
         The default behaviour is calculate for the first conformation, but the
         user can specicify the index of the reference conformation specified by
         cref_idx (int).
-
         '''
 
         # Get language labels for plots
@@ -574,13 +573,17 @@ class FXGeoData:
             d2label = "Euclidean distance"
 
         # 0 - get the first conf data and set it as ref values
-        try:
-            conf_ref = self.confsObjs[cref_idx][1]
+        if ext_ref is None:
+            try:
+                conf_ref = self.confsObjs[cref_idx][1]
 
-        except(TypeError):
-            print('ERROR: cref_idx provided is not a valid integer')
-            exit(0)
-        # TODO add the error for cref_idx not in the range of the ensemble
+            except(TypeError):
+                print('ERROR: cref_idx provided is not a valid integer')
+                exit(0)
+            # TODO : add the error for cref_idx not in the range of the ensemble
+
+        if ext_ref is not None:
+            conf_ref = ext_ref.confsObjs[0][1]
 
         SerialMtx = np.zeros((self.nres, self.nconfs+1))
 
