@@ -30,9 +30,6 @@ functions for protein conformational ensemble analyses based on FleXgeo output.
   --
 
 '''
-
-# TODO add dmax script, Comparison script, add clustering script
-
 # FUNCTIONS #
 def loadCSV(cvs_file_name):
     """ Load data from .csv files """
@@ -66,6 +63,43 @@ def loadCSV(cvs_file_name):
     return data
 
 # CLASSES #
+
+class Cluster:
+    ''' Conformations cluster class '''
+
+    def __init__(self,k):
+
+        self.confslist = []
+        self.number = k
+        # If is a noise cluster
+        self.isNoise = False
+        if k == -1:
+            self.isNoise = True
+
+class ResLocalClusters:
+    ''' A class to store results for a given residue clustering solution.'''
+
+    def __init__(self, res, isSoft=False, SoftMatrix=None):
+
+        self.ofRes = res
+        self.isSoft = isSoft
+
+        if self.isSoft is True:
+            try:
+                assert(SoftMatrix is not None)
+            except:
+                print("You need to provide a SoftMatrix")
+                exit(0)
+
+            self.MembersProbMtx = SoftMatrix
+            self.nclusters = len(self.MembersProbMtx[0, ...]) - 1
+
+        if self.isSoft is False:
+            self.clusters = []
+            # Clusters labels to store hdbscan results
+            self.clusters_labels = None
+            self.nclusters = len(self.clusters)
+            self.Hx = None
 
 class Conf:
     '''
@@ -275,7 +309,7 @@ class FXGeoData:
 
     # -------------------------------------------------------------------------|
 
-    # ----| Methods for CSV data analyses |--------------------------|
+    # ----| Methods for CSV data analyses |------------------------------------|
     def WriteClstrMultiModelPDB(self,pdb_in, out_name,out_pdbdir):
         '''
          Write a multimodel PDB with conformations. This is usefull for cluster
@@ -296,7 +330,9 @@ class FXGeoData:
                 continue
 
     def WriteMultiModelPartialPDB(self,pdb_in, out_name,out_pdbdir):
-        ''' Write PDB from Global Clusters, not all residues are on a cluster.'''
+        '''
+        Write PDB from Global Clusters, not all residues are on a cluster.
+        '''
         working_dir = os.getcwd()
         PDBFile = open(pdb_in, 'r')
         PDBout = open(out_pdbdir+'/'+out_name+'.pdb', 'w')
@@ -552,7 +588,7 @@ class FXGeoData:
         Calcualte KT Euclidean distance of all conformations to an arbitrary
         conformation on the ensemble.
         The default behaviour is calculate for the first conformation, but the
-        user can specicify the index of the reference conformation specified by
+        user can specify the index of the reference conformation specified by
         cref_idx (int).
         '''
 
@@ -658,6 +694,7 @@ class FXGeoData:
         # write csv out file
         out_f = open("LocalDistFromRef.csv", 'w')
         out_f.write('#res,')
+
         for idx, col in enumerate(SerialMtx[0]):
             if idx == 0:
                 continue
@@ -674,11 +711,8 @@ class FXGeoData:
         out_f.close()
 
         # PLOT MATRIX
-        #print(SerialMtx)
-        sns.heatmap(SerialMtx, vmax=.8, square=False,
-                    xticklabels=xsticks,
-                    yticklabels=ysticks,
-                    cmap='Reds')
+        sns.heatmap(SerialMtx, vmax=.8, square=False, xticklabels=xsticks,
+                    yticklabels=ysticks, cmap='Reds')
         plt.xlabel(conflabel)
         plt.ylabel(reslabel+" index")
         plt.savefig("LocalStrucStab_MTX.png", dpi=600)
@@ -728,4 +762,265 @@ class FXGeoData:
         # plt.title("Violin plot of KT Euclidean Distance from a reference structure*")
         plt.savefig("ViolinKTDistFromRef.png", dpi=600)
         plt.show()
+        plt.close()
+
+    # -----| Clustering conformations |----------------------------------------|
+    def ClusterResConfs_by_HDBSCAN(self, res, min_cluster_size=100, showplot=False,
+                                lang="EN", savePDF=False, AllowSingle=True):
+        '''
+        Cluster ensemble conformations based on a single residue.
+
+        Reference:
+        R. Campello, D. Moulavi, and J. Sander, Density-Based Clustering Based on Hierarchical Density
+        Estimates In: Advances in Knowledge Discovery and Data Mining, Springer, pp 160-172. 2013
+
+        L. McInnes, J. Healy, S. Astels, hdbscan: Hierarchical density based clustering
+        In: Journal of Open Source Software, The Open Journal, volume 2, number 11. 2017
+
+        '''
+        # 0 - get plot labels
+        if lang not in ["EN", "PT"]:
+            print(" WARNING: non supported language, setting to English")
+        if lang is "EN":
+            title = "Clusters found by HBDScan for residue "
+            xlabel = "Curvature"
+            ylabel = "Torsion"
+
+        if lang is "PT":
+            title = "Clusters encontrados pelo HBDScan para o residue "
+            xlabel = "Curvatura"
+            ylabel = "Torção"
+
+        # get start time and create clusterer object
+        start_time = time.time()
+        clusterer = hdbscan.HDBSCAN(min_cluster_size=min_cluster_size,
+                                    allow_single_cluster=AllowSingle,
+                                    min_samples=5)
+
+        resClstr = ResLocalClusters(res)
+
+        # get residue data for clustering
+        k,t,a,w,i = [], [], [], [], []
+
+        for each in self.data:
+            if each['res_n'] == int(res):
+                #ca_x.append(each['ca_x'])
+                #ca_y.append(each['ca_y'])
+                #ca_z.append(each['ca_z'])
+                k.append(each['res_curvature'])
+                t.append(each['res_torsion'])
+                a.append(each['res_arc_len'])
+                i.append(each['conf_i'])
+        data = np.stack((k,t), axis=1)
+
+        cluster_labels = clusterer.fit_predict(data)
+        end_time = time.time()
+        print(":: Done in ",end_time - start_time, " s ::")
+        TClusters = clusterer.labels_.max()+1
+        print(" Clusters found: ", clusterer.labels_.max()+1)
+        print(" Cluster persistence:")
+        print(clusterer.cluster_persistence_)
+
+        # Store results on a ResLocalCluster object
+        assert(len(i) == len(cluster_labels))
+
+        # create cluster objects
+        for each in set(cluster_labels):
+            cluster_k = Cluster(k=each)
+            resClstr.clusters.append(cluster_k)
+        # store clusters results on cluster objects
+        resClstr.nclusters = TClusters
+
+        for i_idx, labelk_i in enumerate(cluster_labels):
+            #print "k :", labelk_i, " | i = ", i[i_idx]
+            for clstr_k in resClstr.clusters:
+                if clstr_k.number == labelk_i:
+                    clstr_k.confslist.append(i[i_idx])
+                    break
+                #print cluster_k.confslist
+
+        # store results on CSVobject
+        self.lclustersPerRes.append([res, resClstr])
+
+        # generate plot
+        plot_kwds = {'alpha' : 0.25, 's' : 8, 'linewidths':0}
+        end_time = time.time()
+        palette = sns.color_palette('deep', np.unique(cluster_labels).max() + 1)
+        colors = [palette[x] if x >= 0 else (0.0, 0.0, 0.0) for x in cluster_labels]
+        plt.scatter(data.T[0], data.T[1], c=colors, **plot_kwds)
+        plt.title(title+str(res))#, fontsize=24)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.savefig("ClstrHDBScanRES_"+str(res)+".png", dpi=600)
+        if savePDF is True:
+            plt.savefig("ClstrHDBScanRES_"+str(res)+".pdf", dpi=600)
+
+        if showplot == True:
+            plt.show()
+        plt.close()
+        return None
+
+    def writeStrucClstFiles(self, clstflnm = "StrClstr.clst", isSoft = False):
+        ''' Write a .clst with clusters info'''
+
+        # Read local clusters, if only one cluster write unique
+        # if more than one cluster, write cluster index and its conformations
+
+        clstOUT = open(clstflnm, "w")
+        if isSoft == False:
+            for clst_res in self.lclustersPerRes:
+                res_n = clst_res[0]
+
+                lclusters_n = clst_res[1]
+                clstOUT.write("> "+str(res_n)+"\n")
+                if len(lclusters_n.clusters) == 1:
+                        clstOUT.write(">> Unique Cluster \n")
+                        continue
+                else:
+                    for cluster_k in lclusters_n.clusters:
+
+                        #print "k = ",cluster_k.number
+                        #print " :: ", cluster_k.confslist
+                        clstOUT.write(">> "+str(cluster_k.number)+":")
+                        kn_confs = len(cluster_k.confslist)
+
+                        for idx, conf_i in enumerate(cluster_k.confslist):
+                            if idx == kn_confs-1:
+                                clstOUT.write(str(conf_i)+"\n")
+                            else:
+                                clstOUT.write(str(conf_i)+",")
+        if isSoft == True:
+
+            for softclstr_res in self.lclustersPerRes:
+                # get data
+                res_n = softclstr_res[0]
+                softclstr_n = softclstr_res[1]
+                total_cluster = softclstr_n.nclusters
+                print(softclstr_n.MembersProbMtx[0,...])
+                print(len(softclstr_n.MembersProbMtx[0,...]))
+                print(softclstr_n.nclusters)
+                #write header
+                clstOUT.write("> "+str(res_n)+"\n")
+
+                # write membership propability  matrix
+                for line in softclstr_n.MembersProbMtx:
+                    conf_i = line[0]
+                    clstOUT.write(str(conf_i)+",")
+                    member_prop_vector = line[1:]
+                    #print line
+                    #print member_prop_vector
+                    #print "m : ", member_prop_vector
+                    for k, prob_k in enumerate(member_prop_vector):
+                        #print k, " vs ", total_cluster
+                        if k == total_cluster-1:
+                            clstOUT.write(str(prob_k)+"\n")
+                        else:
+                            clstOUT.write(str(prob_k)+",")
+                clstOUT.write(":: TER ::")
+        clstOUT.close()
+
+    def doHDBScanClstForRes(self, res, min_cluster_size=100, showplot=False,
+                            lang="EN", savePDF=False, AllowSingle=True,
+                            out_dir=''):
+        '''
+        This method do the clustering of residues cuvature and torsion
+        distribution using HDBScan[1].
+
+        [1] L. McInnes, J. Healy, S. Astels, hdbscan: Hierarchical density based
+        clustering In: Journal of Open Source Software, The Open Journal,
+        volume 2, number 11. 2017
+
+        Parameters
+        ----------
+        res = <int>
+             residue number to be clustered
+        [OPTIONAL]
+        min_cluster_size = <int>
+            set the minimum number of conformations a cluster can have to still
+            be considered. [default = 100]
+        showplot = <bool>
+            Show generated plots [defaul = False]
+        lang = <str>
+            Determinate language for plots. Currently, 'EN' for English, 'PT'
+            for Portuguese.
+
+        '''
+
+        # get plot labels
+        if lang not in ["EN", "PT"]:
+            print(" WARNING: non supported language, setting to English")
+            lang = "EN"
+        if lang is "EN":
+            title = "Clusters found by HBDScan for residue "
+            xlabel = "Curvature"
+            ylabel = "Torsion"
+
+        if lang is "PT":
+            title = "Clusters encontrados pelo HBDScan para o resíduo"
+            xlabel = "Curvatura"
+            ylabel = "Torção"
+
+        # get start time
+        start_time = time.time()
+        # create clusterer object
+        clusterer = hdbscan.HDBSCAN(min_cluster_size=min_cluster_size,
+                                    allow_single_cluster=AllowSingle,
+                                    min_samples=5)
+        resClstr = ResLocalClusters(res)
+
+        # get residue data for clustering
+        k, t, a, w, i = [], [], [], [], []
+
+        for each in self.data:
+            if each['res_n'] == int(res):
+                k.append(each['res_curvature'])
+                t.append(each['res_torsion'])
+                a.append(each['res_arc_len'])
+                i.append(each['conf_i'])
+
+        data = np.stack((k,t), axis=1)
+
+        cluster_labels = clusterer.fit_predict(data)
+        end_time = time.time()
+        print(":: Done in ",end_time - start_time, " s ::")
+        TClusters = clusterer.labels_.max()+1
+        print(" Clusters found: ", clusterer.labels_.max()+1)
+        print(" Clusters persistence:")
+        print(clusterer.cluster_persistence_)
+        # Store results on a ResLocalCluster object
+        assert(len(i) == len(cluster_labels))
+
+        # create cluster objects
+
+        for each in set(cluster_labels):
+            cluster_k = Cluster(k=each)
+            #print cluster_k.number
+            resClstr.clusters.append(cluster_k)
+        # store clusters results on cluster objects
+        resClstr.nclusters = TClusters
+
+        for i_idx, labelk_i in enumerate(cluster_labels):
+            for clstr_k in resClstr.clusters:
+                if clstr_k.number == labelk_i:
+                    clstr_k.confslist.append(i[i_idx])
+                    break
+
+        # store results on CSVobject
+        self.lclustersPerRes.append([res, resClstr])
+
+        # generate plot
+        plot_kwds = {'alpha' : 0.25, 's' : 8, 'linewidths':0}
+        end_time = time.time()
+        palette = sns.color_palette('deep', np.unique(cluster_labels).max() + 1)
+        colors = [palette[x] if x >= 0 else (0.0, 0.0, 0.0) for x in cluster_labels]
+        plt.scatter(data.T[0], data.T[1], c=colors, **plot_kwds)
+        plt.title(title+str(res))#, fontsize=24)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.savefig("ClstrHDBScanRES_"+str(res)+".png", dpi=600)
+        if savePDF is True:
+            plt.savefig(out_dir+"ClstrHDBScanRES_"+str(res)+".pdf", dpi=600)
+
+        if showplot == True:
+            plt.show()
         plt.close()
