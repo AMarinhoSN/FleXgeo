@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import FXgeoToolBox
 from sys import argv
 import pickle
@@ -39,6 +42,8 @@ print("|     -refidx=[int]        : the reference conformation index")
 print("|                            (default=0)")
 print("|     -ext_ref=[_xgeo.csv] : external reference state xgeo csv output")
 print("|---------------------------------------------------------------------|")
+
+
 print(": INPUT: ")
 
 # 0 - Process input
