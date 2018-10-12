@@ -1,9 +1,9 @@
 # FleXgeo
 
 The FleXgeo is a software package designed for protein conformational ensemble analyses based on a differential geometry representation of protein backbones. The package is composed of a binary of the core program which calculates the differential geometry descriptors (more details bellow) and a set of python scripts designed for the analyses of the results. Currently,  there are ready to use scripts to  :
-* **cluster protein conformations**, via global clustering solution per residue based on its $\kappa / \tau$ distribution.
-*  **quantify protein residues flexibility**, via  the computation of $d_{max}$
-*  **compare protein conformations to a reference structure**,  via the computation of euclidean distances on the $\kappa / \tau$ space.
+* **cluster protein conformations**, via global clustering solution per residue based on its curvature and torsion distribution.
+*  **quantify protein residues flexibility**, via  the computation of dmax
+*  **compare protein conformations to a reference structure**,  via the computation of euclidean distances on the curvature and torsion space.
 
 An object oriented solution to  is also provided for users that need a better modularity and include FleXgeo data on their own analyses pipeline.  
 
