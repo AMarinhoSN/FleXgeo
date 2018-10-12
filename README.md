@@ -1,7 +1,24 @@
-
 # FleXgeo
 
-The FleXgeo is a software package designed for protein conformational ensemble analyses based on a differential geometry representation of protein backbones. The package is composed of a binary of the core program which calculates the differential geometry descriptors (more details bellow) and a set of scripts designed for the analyses of the results. FleXgeo code was written by PhD. Antonio Marinho da Silva Neto and PhD. Rinaldo Wander Montalvao.
+The FleXgeo is a software package designed for protein conformational ensemble analyses based on a differential geometry representation of protein backbones. The package is composed of a binary of the core program which calculates the differential geometry descriptors (more details bellow) and a set of python scripts designed for the analyses of the results. Currently,  there are ready to use scripts to  :
+* **cluster protein conformations**, via global clustering solution per residue based on its $\kappa / \tau$ distribution.
+*  **quantify protein residues flexibility**, via  the computation of $d_{max}$
+*  **compare protein conformations to a reference structure**,  via the computation of euclidean distances on the $\kappa / \tau$ space.
+
+An object oriented solution to  is also provided for users that need a better modularity and include FleXgeo data on their own analyses pipeline.  
+
+FleXgeo code was written by PhD. Antonio Marinho da Silva Neto and PhD. Rinaldo Wander Montalvao.
+
+## How to install?
+
+- **1 . Download FleXgeo from GitHub**
+	>$ git clone https://github.com/AMarinhoSN/FleXgeo.git
+
+- **2 . Install python requirements**
+	>$ pip install cython
+	>$ pip install -r /path/to/FleXgeo/requirements.txt
+
+- **3 . Have fun (;D)**
 
 ## How to run it?
 There are two stages of FleXgeo applications, the differential geometry descriptors calculation and the analyses part. A website with tutorials will be provided in the future, but for now check the **quick and dirt** guide:
@@ -19,7 +36,14 @@ FleXgeo accepts the following arguments:
 
  - **2. Analyses**
 	* Plot xgeo data
-		>$ python3.5 /path/to/PlotFXgeoData.py DiffGeo_raw.csv
+		>$ python3.5 /path/to/PlotFXgeoData.py DiffGeo_xgeo.csv
+
+			usage: PlotFXgeoData.py [-h] in_xgeo
+			This scripts generate plots for FleXgeo results.
+			positional arguments:
+			  in_xgeo   'xgeo.csv' FleXgeo data file.
+			optional arguments:
+			  -h, --help  show this help message and exit
 
 	* Calculate distance between all conformations and a reference conformation on the ensemble
 		>$ python3.5 /path/to/CalcEnsDistFromRef.py -in=XgeoObjFilname.p
@@ -44,10 +68,42 @@ FleXgeo accepts the following arguments:
 		PS: In addition to computation of dMax, this script also run a Haar Wavelet transformation of the Z-score of residues dMax in order to automatically identify the most flexible residues.
 
 
-	* [TO ADD] Clustering by HDBScan
+	* Clustering conformations
+	    * Run HDBSCAN
+		    >$ python3.5 /path/to/GetResClusters.py DiffGeo_xgeo.csv
 
-	## What are the contents of the output files?
-	FleXgeo outputs 5 .csv files:
+			   USAGE: GetResClusters.py [-h] [-res RES] [-out_path OUT_PATH]
+                         [-min_pcluster MIN_PCLUSTER] in_csv
+
+		        positional arguments:
+					in_csv                csv file with FleXgeo data
+				optional arguments:
+					-h, --help          
+				          show this help message and exit
+			        -res RES  
+		                  specify residue to be clustered. (default: 'ALL')
+		            -out_path OUT_PATH   
+				          specify dir to write output files. (default: working dir)
+		            -min_pcluster MIN_PCLUSTER
+		                  set the minimum conformations percentage a cluster  must have (default: .05)
+
+		* Write cluster pdbs
+			>$ python3.5 /path/to/WriteClustersPDB.py cluster.clstr source.pdb res
+
+				USAGE: WriteClustersPDB.py [-h] [-out_path OUT_PATH] in_clstr src_pdb res
+				Write pdb files of cluster from '.clst'.
+
+				positional arguments:
+				  in_clstr            clstr file.
+				  src_pdb             source pdb file.
+				  res                 specify residue to write clusters pdbs.
+
+				optional arguments:
+				  -h, --help          show this help message and exit
+				  -out_path OUT_PATH  specify dir to write output files. (default: working dir)
+
+## What are the contents of the output files?
+FleXgeo outputs 5 .csv files:
 
 	 1. **Diffgeo_xgeo.csv** :  contains the calculated differential geometry descriptors of the input ensemble.
 	 2.  Diffgeo_NORM.csv : Same values of "Diffgeo_xgeo,csv" but normalized to [0,1].
@@ -56,8 +112,8 @@ FleXgeo accepts the following arguments:
 	 5.  Diffgeo_VAR.csv: Variation of FleXgeo descriptors per residue
 	 6.  DiffgeoStat.lua : The histogram bins position and value of each descriptor for each residue.
 
-	## How to cite?
-	The FleXgeo paper is currently under consideration for publication and will be added here as soon as possible.
+## How to cite?
+The FleXgeo paper is currently under consideration for publication and will be added here as soon as possible.
 
-	## Why just binaries files for the core of FleXgeo?
-	Unfortunately, we use Numerical Recipes on our code and we are not allowed to distribute the source code. We plan to rewrite those part of the code in the future, but this is not on our top priorities right now. If you have some trouble on running a binary file on your machine, feel free to contact Antonio at amarinho@cent.uw.edu.pl and we can try to provide an specific binary for you.
+## Why just binaries files for the core of FleXgeo?
+Unfortunately, we use Numerical Recipes on our code and we are not allowed to distribute the source code. We plan to rewrite those part of the code in the future, but this is not on our top priorities right now. If you have some trouble on running a binary file on your machine, feel free to contact Antonio at amarinho@cent.uw.edu.pl and we can try to provide an specific binary for you.
