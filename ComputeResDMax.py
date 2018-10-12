@@ -7,7 +7,7 @@ import sys
 '''
 This script compute maximum euclidean distance of each residue and generate
 a plot. In addition, a Haar wavelet transformation is provided to facilitate
-the identification of most flexible residues. 
+the identification of most flexible residues.
 '''
 import math
 from pylab import *
@@ -112,7 +112,6 @@ for line in lines:
     dt = sqrt(tokens[1]**2 + tokens[2]**2)
     max_dt.append(dt)
 
-# ?? pq max al??
 data = max_dt
 
 mu = np.mean(data)  # data mean
@@ -228,5 +227,4 @@ def reset(event):
     sthres.reset()
     slimit.reset()
 button.on_clicked(reset)
-
 show()
