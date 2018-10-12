@@ -4,7 +4,7 @@ print(" >> This script remove outliers according to histogram data << ")
 dofile("DiffGeoStat.lua")
 
 -- Set treshold to be consider outliers
-pc = 10.0 -- limit to be consider an outlier, i. e., 1% population
+pc = 1.0 -- limit to be consider an outlier, i. e., 1% population
 cutoff = math.floor(models*pc/100.0) -- cutoff of total structures
 
 print(" > pc = ", pc, "%")
