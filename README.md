@@ -5,7 +5,7 @@ The FleXgeo is a software package designed for protein conformational ensemble a
 *  **quantify protein residues flexibility**, via  the computation of dmax
 *  **compare protein conformations to a reference structure**,  via the computation of euclidean distances on the curvature and torsion space.
 
-An object oriented solution to  is also provided for users that need a better modularity and include FleXgeo data on their own analyses pipeline.  
+An object oriented solution to  is also provided for users that need a better modularity and include FleXgeo data on their own analyses pipeline.
 
 FleXgeo code was written by PhD. Antonio Marinho da Silva Neto and PhD. Rinaldo Wander Montalvao.
 
@@ -16,21 +16,22 @@ FleXgeo code was written by PhD. Antonio Marinho da Silva Neto and PhD. Rinaldo 
 	$ git clone https://github.com/AMarinhoSN/FleXgeo.git
 	```
 - **2 . Install requirements**
-	You can will a need a [Python 3](https://www.python.org/download/releases/3.0/)  and [pip3](https://pip.pypa.io/en/stable/installing/) to install the python libraries. You can install directly on your default python enviroment
+	You will need [Python 3](https://www.python.org/download/releases/3.0/) to run the scripts provided and you can install the required python libraries using [pip3](https://pip.pypa.io/en/stable/installing/). To install python libraries directly on your default python enviroment:
 	```bash
 	$ pip3 install cython
 	$ pip3 install -r /path/to/FleXgeo/requirements.txt
 	```
-	Or you can create an virtual enviroment just for FleXgeo by
+	Or you can create a virtual enviroment for FleXgeo by:
 	```bash
 	$ pip3 install virtualenv
 	$ cd virtual_envs_location
 	$ virtualenv flexgeo_env
 	$ source flexgeo_env/bin/activate
 	$ cd FLEXGEO_LOCATION
+	$ pip3 install cython
 	$ pip3 install -r requirements.txt
 	```
-  You also gonna need [Lua](https://www.lua.org/start.html) interpreter to run the part of the dmax analyses. On Linux, you can install it by:
+  You also gonna need [Lua](https://www.lua.org/start.html) interpreter to compute dmax. On Linux, you can install it by:
 	```bash
 	$ sudo apt-get install luajit
 	```
@@ -56,12 +57,15 @@ FleXgeo accepts the following arguments:
 	```bash
 	$ python3 /path/to/PlotFXgeoData.py DiffGeo_xgeo.csv
 	```
-			usage: PlotFXgeoData.py [-h] in_xgeo
-			This scripts generate plots for FleXgeo results.
-			positional arguments:
-			  in_xgeo   'xgeo.csv' FleXgeo data file.
-			optional arguments:
-			  -h, --help  show this help message and exit
+		
+		usage: PlotFXgeoData.py [-h] in_xgeo
+		This scripts generate plots for FleXgeo results.
+		
+		positional arguments:
+	  	in_xgeo   'xgeo.csv' FleXgeo data file.
+		
+		optional arguments:
+		  -h, --help  show this help message and exit
 
 	* Calculate distance between all conformations and a reference conformation on the ensemble
 	```bash
@@ -98,8 +102,10 @@ FleXgeo accepts the following arguments:
 
 		USAGE: GetResClusters.py [-h] [-res RES] [-out_path OUT_PATH]
 		[-min_pcluster MIN_PCLUSTER] in_csv
+		
 		positional arguments:
 			in_csv                csv file with FleXgeo data
+		
 		optional arguments:
 			-h, --help            show this help message and exit
 			-res RES              specify residue to be clustered. (default: 'ALL')
