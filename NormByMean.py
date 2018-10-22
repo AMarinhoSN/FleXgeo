@@ -29,10 +29,16 @@ help= '''Suffix of csv output (default: DiffGeo_NORM_mean)''')
 parser.parse_args()
 parser.print_help()
 args = parser.parse_args()
-
+print("|-- INPUT --|")
 DIR = args.out_dir
+if DIR[-1] != '/':
+    DIR = DIR+'/'
+print("| out_dir = ", DIR)
 CSV_IN = args.in_csv
+print("| in_csv = ", CSV_IN)
 OUT_SFX = args.out_sfx
+print("| out_sfx = ", OUT_SFX)
+print("|-----------|")
 
 print("@ loading {} data".format(CSV_IN))
 df = pd.read_csv(CSV_IN,
@@ -58,5 +64,5 @@ print("@ writing {}".format(OUT_SFX+".csv"))
 dct = {'c_norm':curvm, 't_norm':torsm, 'w_norm':wrism, 'a_norm':arcsm}
 cols_to_add_df = pd.DataFrame(dct)
 new_df = pd.concat([df, cols_to_add_df], axis=1)
-new_df.to_csv(DIR+OUT_SFX+".csv")
+new_df.to_csv(DIR+OUT_SFX+".csv", header=None, index=False)
 print(":: DONE ::")
