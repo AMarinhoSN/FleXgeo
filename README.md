@@ -57,24 +57,24 @@ FleXgeo accepts the following arguments:
 	```bash
 	$ python3 /path/to/PlotFXgeoData.py DiffGeo_xgeo.csv
 	```
-		
+
 		usage: PlotFXgeoData.py [-h] in_xgeo
 		This scripts generate plots for FleXgeo results.
-		
+
 		positional arguments:
 	  	in_xgeo   'xgeo.csv' FleXgeo data file.
-		
+
 		optional arguments:
 		  -h, --help  show this help message and exit
 
 	* Calculate distance between all conformations and a reference conformation on the ensemble
 	```bash
-	$ python3.5 /path/to/CalcEnsDistFromRef.py -in=XgeoObjFilname.p
+	$ python3.5 /path/to/FleXgeo/CalcEnsDistFromRef.py -in=XgeoObjFilname.p
 	```
 
 	* Calculate distance between all conformations and an external reference conformation
 	```bash
-	$ python3.5 /path/to/CalcEnsDistFromRef.py -in=XgeoObjFilname.p -ext_ref=/path/to/ref_xgeo.csv
+	$ python3.5 /path/to/FleXgeo/CalcEnsDistFromRef.py -in=XgeoObjFilname.p -ext_ref=/path/to/ref_xgeo.csv
 	```
 	* Calculate residues Max Euclidean distance observed (dMax)
 		* Eliminate extreme bins outliers using a percentage treshold [default = 1% of the total conformations on the ensemble]
@@ -97,15 +97,15 @@ FleXgeo accepts the following arguments:
 	* Clustering conformations
 	    * Run HDBSCAN
 	```bash
-	>$ python3.5 /path/to/GetResClusters.py DiffGeo_xgeo.csv
+	>$ python3.5 /path/to/FleXgeo/GetResClusters.py DiffGeo_xgeo.csv
 	```
 
 		USAGE: GetResClusters.py [-h] [-res RES] [-out_path OUT_PATH]
 		[-min_pcluster MIN_PCLUSTER] in_csv
-		
+
 		positional arguments:
 			in_csv                csv file with FleXgeo data
-		
+
 		optional arguments:
 			-h, --help            show this help message and exit
 			-res RES              specify residue to be clustered. (default: 'ALL')
@@ -113,7 +113,7 @@ FleXgeo accepts the following arguments:
 			-min_pcluster MIN_PCLUSTER set the minimum conformations percentage a cluster  must have (default: .05)
 	* Write cluster pdbs
 	```bash
-	$ python3.5 /path/to/WriteClustersPDB.py cluster.clstr source.pdb res
+	$ python3.5 /path/to/FleXgeo/WriteClustersPDB.py cluster.clstr source.pdb res
 	```
 
 		USAGE: WriteClustersPDB.py [-h] [-out_path OUT_PATH] in_clstr src_pdb res
@@ -127,6 +127,28 @@ FleXgeo accepts the following arguments:
 		optional arguments:
 			-h, --help          show this help message and exit
 			-out_path OUT_PATH  specify dir to write output files. (default: working dir)
+
+
+	* Working with normalized values
+		If you need normalized FleXgeo data for your analyses, you can use the **"Diffgeo_NORM.csv"** (for values rescaled to [0,1]) instead of the **Diffgeo_xgeo.csv** as input for scripts. If you need normalized values but with  constant mean values, you can run:
+	```bash
+		$ python3.5 /path/to/FleXgeo/NormByMean Diffgeo_xgeo.csv
+	```
+
+		usage: NormByMean.py [-h] [-out_dir OUT_DIR] [-out_sfx OUT_SFX] in_csv
+
+		Generate normalized values of FleXgeo descriptors by keeping the same mean values observed in the original data.
+
+		positional arguments:
+			in_csv            csv file with FleXgeo data
+
+		optional arguments:
+			-h, --help        show this help message and exit
+			-out_dir OUT_DIR  specify dir to write output files. (default: working dir)
+			-out_sfx OUT_SFX  Suffix of csv output (default: DiffGeo_NORM_mean)
+
+		This script will generate a new ".csv" (default output name = **DiffGeo_NORM_mean.csv** ) with the normalized values and you can use it instead of the **Diffgeo_xgeo.csv**.
+
 
 ## What are the FleXgeo output files content?
 FleXgeo outputs 5 .csv files:
