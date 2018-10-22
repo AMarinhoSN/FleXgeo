@@ -130,7 +130,8 @@ FleXgeo accepts the following arguments:
 
 
 	* Working with normalized values
-		If you need normalized FleXgeo data for your analyses, you can use the **"Diffgeo_NORM.csv"** (for values rescaled to [0,1]) instead of the **Diffgeo_xgeo.csv** as input for scripts. If you need normalized values but with  constant mean values, you can run:
+	
+	If you need normalized FleXgeo data for your analyses, you can use the **"Diffgeo_NORM.csv"** (for values rescaled to [0,1]) instead of the **Diffgeo_xgeo.csv** as input for scripts. If you need normalized values but keep the same mean observed on the original dataset, you can run:
 	```bash
 		$ python3.5 /path/to/FleXgeo/NormByMean Diffgeo_xgeo.csv
 	```
@@ -147,7 +148,7 @@ FleXgeo accepts the following arguments:
 			-out_dir OUT_DIR  specify dir to write output files. (default: working dir)
 			-out_sfx OUT_SFX  Suffix of csv output (default: DiffGeo_NORM_mean)
 
-		This script will generate a new ".csv" (default output name = **DiffGeo_NORM_mean.csv** ) with the normalized values and you can use it instead of the **Diffgeo_xgeo.csv**.
+	This script will generate a new ".csv" (default output name = **DiffGeo_NORM_mean.csv** ) with the normalized values and you can use it instead of the **Diffgeo_xgeo.csv**.
 
 
 ## What are the FleXgeo output files content?
