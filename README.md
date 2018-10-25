@@ -1,11 +1,9 @@
 # FleXgeo
 
-The FleXgeo is a software package designed for protein conformational ensemble analyses based on a differential geometry representation of protein backbones. The package is composed of a binary of the core program which calculates the differential geometry descriptors (more details bellow) and a set of python scripts designed for the analyses of the results. Currently,  there are ready to use scripts to  :
+The FleXgeo is a software package designed for protein conformational ensemble analyses based on a differential geometry representation of protein backbones. The package is composed of a binary of the core program which calculates the differential geometry descriptors and a set of python scripts designed for the analyses of the results (more details bellow). FleXgeo is still a prototype version and more features will be added in the future, currently, there are ready to use scripts to:
 * **cluster protein conformations**, via global clustering solution per residue based on its curvature and torsion distribution.
 *  **quantify protein residues flexibility**, via  the computation of dmax
 *  **compare protein conformations to a reference structure**,  via the computation of euclidean distances on the curvature and torsion space.
-
-An object oriented solution to  is also provided for users that need a better modularity and include FleXgeo data on their own analyses pipeline.
 
 FleXgeo code was written by PhD. Antonio Marinho da Silva Neto and PhD. Rinaldo Wander Montalvao.
 
@@ -131,9 +129,9 @@ FleXgeo accepts the following arguments:
 
 	* Working with normalized values
 	
-	If you need normalized FleXgeo data for your analyses, you can use the **"Diffgeo_NORM.csv"** (for values rescaled to [0,1]) instead of the **Diffgeo_xgeo.csv** as input for scripts. If you need normalized values but keep the same mean observed on the original dataset, you can run:
+	From our experience, working with FleXgeo raw data usually leads to the same conclusion of using normalized values. However, is possible that different analyses scenarios may require different normalization procedures. If you need to work with normalized values, don’t worry, we've got you covered. If you need normalized FleXgeo data for your analyses, you can use the **"Diffgeo_NORM.csv"** (for values rescaled to [0,1]) instead of the **Diffgeo_xgeo.csv** as input for scripts. If you need normalized values by keeping the same mean observed on the original dataset, you can compute it using:
 	```bash
-		$ python3.5 /path/to/FleXgeo/NormByMean Diffgeo_xgeo.csv
+		$ python3.5 /path/to/FleXgeo/NormByMean.py Diffgeo_xgeo.csv
 	```
 
 		usage: NormByMean.py [-h] [-out_dir OUT_DIR] [-out_sfx OUT_SFX] in_csv
@@ -148,8 +146,7 @@ FleXgeo accepts the following arguments:
 			-out_dir OUT_DIR  specify dir to write output files. (default: working dir)
 			-out_sfx OUT_SFX  Suffix of csv output (default: DiffGeo_NORM_mean)
 
-	This script will generate a new ".csv" (default output name = **DiffGeo_NORM_mean.csv** ) with the normalized values and you can use it instead of the **Diffgeo_xgeo.csv**.
-
+	This NormByMean.py script will generate a new ".csv" (default output name = **DiffGeo_NORM_mean.csv** ) with the normalized values and you can use it instead of the **Diffgeo_xgeo.csv**.
 
 ## What are the FleXgeo output files content?
 FleXgeo outputs 5 .csv files:
@@ -165,4 +162,4 @@ FleXgeo outputs 5 .csv files:
 The FleXgeo paper is currently under consideration for publication and will be added here as soon as possible.
 
 ## Why just binaries files for the core of FleXgeo?
-Unfortunately, we use Numerical Recipes on our code and we are not allowed to distribute the source code. We plan to rewrite those part of the code in the future, but this is not on our top priorities right now. If you have some trouble on running a binary file on your machine, feel free to contact Antonio at amarinho@cent.uw.edu.pl and we can try to provide an specific binary for you.
+Unfortunately, we use Numerical Recipes on our code and we are not allowed to distribute the source code. We plan to rewrite those part of the code in the future, but this is not on our top priorities right now. If you have some trouble on running a binary file on your machine, feel free to contact Antonio at amarinho@cent.uw.edu.pl and we can try to provide a specific binary for you.
