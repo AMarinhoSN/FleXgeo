@@ -65,17 +65,22 @@ FleXgeo accepts the following arguments:
 		optional arguments:
 		  -h, --help  show this help message and exit
 		  
-	 This script will output a set of plots as '.png' files and a 'XgeoObj.p', which is a pickle file that can be used to load the data on other scripts.
+	 This script will output a set of plots as '.png' files and a 'XgeoObj.p', which is a pickle file that can be used to load the data on other scripts. The plots generated are:
+	 1. 2D line plots with conformations curvature and torsion values per residues
+	 2. Violin plots of the distribution of curvature and torsion values observed per residue 
+
 	 
 	* Calculate distance between all conformations and a reference conformation on the ensemble.
 	```bash
 	$ python3.5 /path/to/FleXgeo/CalcEnsDistFromRef.py -in=XgeoObj.p
 	```
-
+	This script will output a distance matrix plot and a '.csv' file with the computed distances.
+	
 	* Calculate distance between all conformations and an external reference conformation
 	```bash
 	$ python3.5 /path/to/FleXgeo/CalcEnsDistFromRef.py -in=XgeoObj.p -ext_ref=/path/to/ref_xgeo.csv
 	```
+	
 	* Calculate residues Max Euclidean distance observed (dMax)
 		* Eliminate extreme bins outliers using a percentage treshold [default = 1% of the total conformations on the ensemble]
 	```bash
@@ -111,6 +116,10 @@ FleXgeo accepts the following arguments:
 			-res RES              specify residue to be clustered. (default: 'ALL')
 			-out_path OUT_PATH    specify dir to write output files. (default: working dir)
 			-min_pcluster MIN_PCLUSTER set the minimum conformations percentage a cluster  must have (default: .05)
+	This script will output:
+		1. scatter 2D plots of the curvature and torsion values colored according to the clustering solution
+		2. a '.clst' file which contain the conformations indexes of each cluster found
+		
 	* Write cluster pdbs
 	```bash
 	$ python3.5 /path/to/FleXgeo/WriteClustersPDB.py cluster.clstr source.pdb res
