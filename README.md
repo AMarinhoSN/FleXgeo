@@ -51,7 +51,7 @@ FleXgeo accepts the following arguments:
 |`-outprfx=[prefix]` | Set the output files prefix to be used | 'Diffgeo_' |
 
  - **2. Analyses**
-	* Plot xgeo data
+	* Plot xgeo data.
 	```bash
 	$ python3 /path/to/PlotFXgeoData.py DiffGeo_xgeo.csv
 	```
@@ -64,15 +64,17 @@ FleXgeo accepts the following arguments:
 
 		optional arguments:
 		  -h, --help  show this help message and exit
-
-	* Calculate distance between all conformations and a reference conformation on the ensemble
+		  
+	 This script will output a set of plots as '.png' files and a 'XgeoObj.p', which is a pickle file that can be used to load the data on other scripts.
+	 
+	* Calculate distance between all conformations and a reference conformation on the ensemble.
 	```bash
-	$ python3.5 /path/to/FleXgeo/CalcEnsDistFromRef.py -in=XgeoObjFilname.p
+	$ python3.5 /path/to/FleXgeo/CalcEnsDistFromRef.py -in=XgeoObj.p
 	```
 
 	* Calculate distance between all conformations and an external reference conformation
 	```bash
-	$ python3.5 /path/to/FleXgeo/CalcEnsDistFromRef.py -in=XgeoObjFilname.p -ext_ref=/path/to/ref_xgeo.csv
+	$ python3.5 /path/to/FleXgeo/CalcEnsDistFromRef.py -in=XgeoObj.p -ext_ref=/path/to/ref_xgeo.csv
 	```
 	* Calculate residues Max Euclidean distance observed (dMax)
 		* Eliminate extreme bins outliers using a percentage treshold [default = 1% of the total conformations on the ensemble]
