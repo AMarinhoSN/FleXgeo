@@ -581,9 +581,11 @@ class FXGeoData:
         return None
 
     # -----| methods to compare conformations |--------------------------------|
-    def calcD2ConfperRes(self, cref_idx=0, ext_ref=None, showplot=False, xsticks=10, ysticks=10,
-                     lang="EN", bw=.1, linewidth=.1, scale="count", inner=None,
-                     out_prefix='LocalStructStab'):
+    def calcD2ConfperRes(self, cref_idx=0, ext_ref=None, showplot=False,
+                         xsticks=10, ysticks=10, lang="EN", bw=.1, linewidth=.1,
+                         scale="count", inner=None,
+                         out_prefix='LocalStructStab', plot_violin=False,
+                         plot_3D = False):
         '''
         Calcualte KT Euclidean distance of all conformations to an arbitrary
         conformation on the ensemble.
@@ -666,30 +668,31 @@ class FXGeoData:
 
             data4plot.append(res_d2_data)
 
-        # Generate 3D plot
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+        if plot_3D == True:
+            # Generate 3D plot
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
 
-        # Get one color for each residue line
-        colors = matplotlib.cm.rainbow(np.linspace(0, 1, len(data4plot)))
+            # Get one color for each residue line
+            colors = matplotlib.cm.rainbow(np.linspace(0, 1, len(data4plot)))
 
-        # Generate individual plots
-        for i, res_d in enumerate(data4plot):
-            x = res_d[..., 0]  # res
-            z = res_d[..., 1]  # d2
-            y = res_d[..., 2]  # conf
+            # Generate individual plots
+            for i, res_d in enumerate(data4plot):
+                x = res_d[..., 0]  # res
+                z = res_d[..., 1]  # d2
+                y = res_d[..., 2]  # conf
 
-            ax.plot(xs=x, ys=y, zs=z, c=colors[i], linewidth=0.5,
-                    fillstyle='full')
-        # set general plot labels and save .png
-        ax.set_xlabel(reslabel)
-        ax.set_ylabel(conflabel)
-        ax.set_zlabel(d2label)
+                ax.plot(xs=x, ys=y, zs=z, c=colors[i], linewidth=0.5,
+                        fillstyle='full')
 
-        plt.savefig("test.png", dpi=600)
-        if showplot is True:
-            plt.show()
-        plt.close()
+            # set general plot labels and save .png
+            ax.set_xlabel(reslabel)
+            ax.set_ylabel(conflabel)
+            ax.set_zlabel(d2label)
+            plt.savefig("3Dvis.png", dpi=600)
+            if showplot is True:
+                plt.show()
+            plt.close()
 
         # write csv out file
         out_f = open("LocalDistFromRef.csv", 'w')
@@ -727,42 +730,38 @@ class FXGeoData:
         # # I know you hate me by now, but try to rework the SerialMTX
         # # representation to avoid such gambiarras
         # ##############################################################
-        # ViolinMTX = np.zeros((self.nres * self.nconfs, 2))
 
-        ViolinArray = np.array([0, 0])
+        if plot_violin == True:
+            # ViolinMTX = np.zeros((self.nres * self.nconfs, 2))
 
-        for n, line in enumerate(SerialMtx):
-            for i, col in enumerate(line):
-                if i == 0:
-                    continue
-                # print line[0], line[i]
+            ViolinArray = np.array([0, 0])
 
-                dtapoint = np.array([line[0], line[i]])
-                if line[i] < 0:
-                    print(dtapoint)
-                ViolinArray = np.vstack((ViolinArray, dtapoint))
+            for n, line in enumerate(SerialMtx):
+                for i, col in enumerate(line):
+                    if i == 0:
+                        continue
 
-        # Plot Violin d2
-        #print(ViolinArray)
-        x = ViolinArray[1:-1, 0]
-        y = ViolinArray[1:-1, 1]
+                    dtapoint = np.array([line[0], line[i]])
+                    if line[i] < 0:
+                        print(dtapoint)
+                    ViolinArray = np.vstack((ViolinArray, dtapoint))
 
-        ax = sns.violinplot(x=x, y=y, hue=None, data=None,
-                            split=False,
-                            scale=scale,
-                            inner=inner,
-                            bw=bw,
-                            linewidth=linewidth)
+            # Plot Violin d2
+            x = ViolinArray[1:-1, 0]
+            y = ViolinArray[1:-1, 1]
 
-        plt.xticks(range(1, self.nres, xsticks),
-                   range(self.data['res_n'][0], self.data['res_n'][-1], xsticks))
-        plt.xlabel("Residues")
-        plt.ylabel(r"$\kappa-\tau$ Euclidean Distance")
-        # plt.ylim(0,max(y))
-        # plt.title("Violin plot of KT Euclidean Distance from a reference structure*")
-        plt.savefig("ViolinKTDistFromRef.png", dpi=600)
-        plt.show()
-        plt.close()
+            ax = sns.violinplot(x=x, y=y, hue=None, data=None,
+                                split=False, scale=scale, inner=inner, bw=bw,
+                                linewidth=linewidth)
+            plt.xticks(range(1, self.nres, xsticks),
+                       range(self.data['res_n'][0], self.data['res_n'][-1],
+                       xsticks))
+            plt.xlabel("Residues")
+            plt.ylabel(r"$\kappa-\tau$ Euclidean Distance")
+            # plt.ylim(0,max(y))
+            # plt.title("Violin plot of KT Euclidean Distance from a reference structure*")
+            plt.savefig("ViolinKTDistFromRef.png", dpi=300)
+            plt.close()
 
     # -----| Clustering conformations |----------------------------------------|
     def ClusterResConfs_by_HDBSCAN(self, res, min_cluster_size=100, showplot=False,
@@ -1009,7 +1008,8 @@ class FXGeoData:
         self.lclustersPerRes.append([res, resClstr])
 
         # generate plot
-        plot_kwds = {'alpha' : 0.25, 's' : 8, 'linewidths':0}
+        plot_kwds = {'alpha' : 0.6, 's' : 25, 'linewidths':0}
+        sns.set_style("white")
         end_time = time.time()
         palette = sns.color_palette('deep', np.unique(cluster_labels).max() + 1)
         colors = [palette[x] if x >= 0 else (0.0, 0.0, 0.0) for x in cluster_labels]
