@@ -170,7 +170,7 @@ FleXgeo outputs 5 .csv files:
 	 6.  DiffgeoStat.lua : The histogram bins position and value of each descriptor for each residue.
 
 ## How to cite?
-The FleXgeo paper is currently under consideration for publication and will be added here as soon as possible.
+Marinho da Silva Neto, Antonio, et al. ‘A Superposition Free Method for Protein Conformational Ensemble Analyses and Local Clustering Based on a Differential Geometry Representation of Backbone’. Proteins: Structure, Function, and Bioinformatics, Dec. 2018. Crossref, doi:10.1002/prot.25652.
 
 ## Why just binaries files for the core of FleXgeo?
 Unfortunately, we use Numerical Recipes on our code and we are not allowed to distribute the source code. We plan to rewrite those part of the code in the future, but this is not on our top priorities right now. If you have some trouble on running a binary file on your machine, feel free to contact Antonio at amarinho@cent.uw.edu.pl and we can try to provide a specific binary for you.
