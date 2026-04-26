@@ -1,3 +1,9 @@
+
+DEPRECATED :warning:
+----
+Please use ![FleXgeo2](https://github.com/AMarinhoSN/FleXgeo2/tree/main)
+
+---
 # FleXgeo
 
 The FleXgeo is a software package designed for protein conformational ensemble analyses based on a differential geometry representation of protein backbones. The package is composed of a binary of the core program which calculates the differential geometry descriptors and a set of python scripts designed for the analyses of the results (more details bellow). FleXgeo is still a prototype version and more features will be added in the future, currently, there are ready to use scripts to:
